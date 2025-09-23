@@ -12,10 +12,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
 type Translation struct {
 	Identifier   string `json:"identifier"`
 	Name         string `json:"name"`
@@ -58,15 +54,6 @@ type Verse struct {
 type VerseInfo struct {
 	Translation Translation `json:"translation"`
 	Verses      []Verse     `json:"verses"`
-}
-
-type Response struct {
-	Reference       string  `json:"reference"`
-	Verses          []Verse `json:"verses"`
-	Text            string  `json:"text"`
-	TranslationID   string  `json:"translation_id"`
-	TranslationName string  `json:"translation_name"`
-	TranslationNote string  `json:"translation_note"`
 }
 
 func APIResponse(url string) (*http.Response, error) {
@@ -153,7 +140,7 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 	}
 	HtmlStart(w, "ASV Bible")
 	for _, book := range book_info.Books {
-		io.WriteString(w, fmt.Sprintf("<a href=\"%s/%s\">%s</a> <br>", r.URL.Host, strings.ReplaceAll(strings.ToLower(book.Name), " ", ""), book.Name))
+		io.WriteString(w, fmt.Sprintf("<a href=\"/%s\">%s</a> <br>", strings.ReplaceAll(strings.ToLower(book.Name), " ", ""), book.Name))
 	}
 	HtmlEnd(w)
 	// show all books
@@ -224,7 +211,7 @@ func getVerses(w http.ResponseWriter, r *http.Request) {
 	}
 	HtmlStart(w, chapter)
 	for _, verse := range verse_info.Verses {
-		io.WriteString(w, fmt.Sprintf("%v%s%s%s", verse.Verse, " : ", verse.Text, "<br>"))
+		io.WriteString(w, fmt.Sprintf("%v : %s<br>", verse.Verse, verse.Text))
 	}
 	HtmlEnd(w)
 	// show verses and values
